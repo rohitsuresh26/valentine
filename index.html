@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💘 Be My Valentine?</title>
+  <style>
+    :root { --bg1:#fff0f6; --bg2:#ffe8cc; }
+   body{
+  margin:0; min-height:100vh; display:grid; place-items:center;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:
+    linear-gradient(rgba(255,240,246,.75), rgba(255,232,204,.85)),
+    url('bg.jpg') center / cover no-repeat fixed;
+  overflow:hidden;
+}
+    .card{
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(0,0,0,.06);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 28px 22px;
+      width:min(520px, 92vw);
+      text-align:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    h1{ margin:0 0 10px; font-size: clamp(26px, 4vw, 38px); }
+    p{ margin:0 0 18px; color:#333; }
+    .buttons{
+      position: relative;
+      height: 110px;
+      display:flex;
+      justify-content:center;
+      gap: 14px;
+      align-items:center;
+    }
+    button{
+      border:0;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 16px;
+      cursor:pointer;
+      user-select:none;
+      touch-action: manipulation;
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+    }
+    #yes{ background:#ff4d6d; color:white; }
+    #no{
+      background:#343a40; color:white;
+      position:absolute;
+      left: 55%;
+      top: 55%;
+      transform: translate(-50%,-50%);
+    }
+    .small{ font-size: 13px; opacity:.75; margin-top:10px; }
+    .hearts{
+      position:fixed; inset:0; pointer-events:none; opacity:.6;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,77,109,.35) 0 6px, transparent 7px),
+        radial-gradient(circle at 70% 40%, rgba(255,77,109,.25) 0 5px, transparent 6px),
+        radial-gradient(circle at 40% 80%, rgba(255,77,109,.20) 0 4px, transparent 5px);
+      filter: blur(.3px);
+    }
+    .final {
+      display:none;
+      margin-top: 12px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts"></div>
+
+  <div class="card">
+    <h1>Samantha, will you be my Valentine? 💘</h1>
+    <p id="sub">Still choosing you for today, tomorrow, and for 1001 years.</p>
+
+    <div class="buttons" id="arena">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No 🙃</button>
+    </div>
+
+    <div class="small">P.S. I meant it when I said 1001 years.</div>
+
+    <div class="final" id="final">
+  No matter how many years we joke about I choose you every single day.  
+  <br/>Happy Valentine’s Day, baby. ❤️
+</div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById('no');
+    const yesBtn = document.getElementById('yes');
+    const arena = document.getElementById('arena');
+    const sub = document.getElementById('sub');
+    const final = document.getElementById('final');
+
+    function moveNoButton() {
+      const a = arena.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+      const maxX = a.width - b.width;
+      const maxY = a.height - b.height;
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+      noBtn.style.left = `${x + b.width/2}px`;
+      noBtn.style.top  = `${y + b.height/2}px`;
+      noBtn.style.transform = `translate(-50%, -50%)`;
+    }
+
+    arena.addEventListener('mousemove', (e) => {
+      const b = noBtn.getBoundingClientRect();
+      const dx = e.clientX - (b.left + b.width/2);
+      const dy = e.clientY - (b.top + b.height/2);
+      const dist = Math.hypot(dx, dy);
+      if (dist < 90) moveNoButton();
+    });
+
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, {passive:false});
+
+    yesBtn.addEventListener('click', () => {
+      sub.textContent = "Locked in for another year… only 1000 more to go 😉💖";
+      yesBtn.textContent = "Confirmed ✅";
+      noBtn.style.display = "none";
+      final.style.display = "block";
+      confetti();
+    });
+
+    function confetti(){
+      for (let i=0;i<120;i++){
+        const s=document.createElement('div');
+        s.style.position='fixed';
+        s.style.left=Math.random()*100+'vw';
+        s.style.top='-10px';
+        s.style.width='8px';
+        s.style.height='12px';
+        s.style.background=`hsl(${Math.random()*360},90%,60%)`;
+        s.style.transform=`rotate(${Math.random()*360}deg)`;
+        s.style.borderRadius='2px';
+        s.style.opacity='0.9';
+        s.style.zIndex='9999';
+        document.body.appendChild(s);
+
+        const drift=(Math.random()*2-1)*120;
+        const fall=window.innerHeight + 40;
+        s.animate([
+          { transform: s.style.transform, top:'-10px', left:s.style.left },
+          { transform:`rotate(${Math.random()*720}deg)`, top: fall+'px', left:`calc(${s.style.left} + ${drift}px)` }
+        ], { duration: 1200 + Math.random()*900, easing:'cubic-bezier(.2,.7,.2,1)' });
+
+        setTimeout(()=>s.remove(), 2200);
+      }
+    }
+
+    moveNoButton();
+  </script>
+</body>
+</html>
